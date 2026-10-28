@@ -1,0 +1,69 @@
+:root {
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --card-hover: #f1f5f9;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-subtle: #94a3b8;
+
+  --accent-producer: #0d9488;
+  --accent-producer-light: #f0fdfa;
+  --accent-producer-border: #99f6e4;
+
+  --accent-consumer: #e11d48;
+  --accent-consumer-light: #fff1f2;
+  --accent-consumer-border: #fecdd3;
+
+  --accent-race: #6366f1;
+  --accent-race-light: #eef2ff;
+  --accent-race-border: #c7d2fe;
+
+  --accent-warn: #d97706;
+  --accent-warn-light: #fffbeb;
+  --accent-warn-border: #fde68a;
+
+  --slot-empty-bg: #f8fafc;
+  --slot-empty-border: #cbd5e1;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+[data-theme="dark"] {
+  --bg: #090d16;
+  --card-bg: #111827;
+  --card-border: #1f2937;
+  --card-hover: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-subtle: #64748b;
+
+  --accent-producer: #14b8a6;
+  --accent-producer-light: rgba(20, 184, 166, 0.12);
+  --accent-producer-border: rgba(20, 184, 166, 0.3);
+
+  --accent-consumer: #fb7185;
+  --accent-consumer-light: rgba(251, 113, 133, 0.12);
+  --accent-consumer-border: rgba(251, 113, 133, 0.3);
+
+  --accent-race: #818cf8;
+  --accent-race-light: rgba(129, 140, 248, 0.12);
+  --accent-race-border: rgba(129, 140, 248, 0.3);
+
+  --accent-warn: #fbbf24;
+  --accent-warn-light: rgba(251, 191, 36, 0.12);
+  --accent-warn-border: rgba(251, 191, 36, 0.3);
+
+  --slot-empty-bg: #0d131f;
+  --slot-empty-border: #334155;
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 10px 0 rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.5);
+}

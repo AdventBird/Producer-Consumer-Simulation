@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vehicle Rental Service — OS Concurrency & Race Condition Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- HEADER -->
+    <header>
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 10.7 2 10.8 2 11v5c0 .6.4 1 1 1h2"/>
+            <circle cx="7" cy="17" r="2"/>
+            <path d="M9 17h6"/>
+            <circle cx="17" cy="17" r="2"/>
+          </svg>
+        </div>
+        <div class="brand-title">
+          <h1>Vehicle Rental Service <span class="badge-os">Bounded Buffer · OS P5</span></h1>
+          <p>Interactive Concurrency & Race Condition Demonstration (Python <code>cpp.py</code>)</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="icon-btn" id="themeToggle" title="Toggle Dark/Light Mode">
+          <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="soundToggle" title="Toggle Sound Feedback">
+          <svg id="soundIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+          </svg>
+        </button>
+        <button class="btn btn-outline btn-sm" id="resetBtn" title="Reset Simulation">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+          </svg>
+          Reset State
+        </button>
+      </div>
+    </header>
+
+    <!-- METRICS BAR -->
+    <div class="metrics-bar">
+      <div class="metric-card">
+        <div class="metric-title">Warehouse Capacity</div>
+        <div class="metric-value-row">
+          <span class="metric-val" id="metricCapacity">5</span>
+          <span class="metric-sub">Max Slots</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="capacityTrack" style="width: 100%;"></div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-title">Vehicles In Stock</div>
+        <div class="metric-value-row">
+          <span class="metric-val" id="metricCount">0</span>
+          <span class="metric-sub" id="metricOccupancy">0% utilized</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="occupancyBar" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-title">Concurrency State</div>
+        <div class="metric-value-row">
+          <div style="display:flex; align-items:center; height: 100%; margin-top: 4px;">
+            <span class="status-pill status-normal" id="statusPill">Synchronized</span>
+          </div>
+          <span class="metric-sub" id="statusDetail">Buffer Idle</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="stateIndicator" style="width: 100%; background: var(--accent-producer);"></div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-title">Total Operations</div>
+        <div class="metric-value-row">
+          <span class="metric-val" id="metricOps">0</span>
+          <span class="metric-sub" id="metricOpsBreakdown">P:0 / C:0 / RC:0</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width: 100%; background: var(--text-subtle);"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIMULATOR LAYOUT -->
+    <div class="simulator-layout">
+      
+      <!-- LEFT: VISUAL GARAGE & CONTROLS -->
+      <div class="garage-section">
+        
+        <div class="section-header">
+          <div class="section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="7" width="20" height="14" rx="2"/>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+            </svg>
+            Warehouse Parking Bays (Buffer)
+          </div>
+          <span class="slot-index" id="slotsCountLabel">5 BAY STORAGE</span>
+        </div>
+
+        <!-- BAYS CONTAINER -->
+        <div class="bays-grid" id="baysGrid">
+          <!-- Dynamically populated slots -->
+        </div>
+
+        <!-- CLI ACTION BUTTONS (Matching 1, 2, 3 in cpp.py) -->
+        <div class="action-panel">
+          <button class="btn btn-produce" id="btnProduce" title="Option 1: Add a vehicle to the lot">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="16"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+            1. Produce (+ Vehicle)
+          </button>
+
+          <button class="btn btn-consume" id="btnConsume" title="Option 2: Rent a vehicle out">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+            2. Consume (- Rent)
+          </button>
+
+          <button class="btn btn-race" id="btnRace" title="Option 3: Simulate non-atomic read/write race condition">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+            3. Race Condition
+          </button>
+        </div>
+
+        <!-- RACE CONDITION STEP-BY-STEP EXPLANATION -->
+        <div class="race-explanation-box" id="raceExplanationBox">
+          <div class="race-header">
+            <div style="font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-race)" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Race Condition Concurrency Timeline (Lost Update)
+            </div>
+            <span style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono);">thread_interleaving</span>
+          </div>
+
+          <div class="threads-preview">
+            <div class="thread-card thread-producer">
+              <div class="thread-title">
+                <span style="width:8px; height:8px; border-radius:50%; background:var(--accent-producer);"></span>
+                Producer Thread
+              </div>
+              <div class="thread-math" id="producerMath">
+                Reads: count = <span id="prodReadVal">-</span><br>
+                Computes: <span id="prodComputeVal">-</span>
+              </div>
+            </div>
+
+            <div class="vs-divider">
+              VS
+              <div style="font-size: 0.6rem; color: var(--text-subtle);">CONCURRENT</div>
+            </div>
+
+            <div class="thread-card thread-consumer">
+              <div class="thread-title">
+                <span style="width:8px; height:8px; border-radius:50%; background:var(--accent-consumer);"></span>
+                Consumer Thread
+              </div>
+              <div class="thread-math" id="consumerMath">
+                Reads: count = <span id="consReadVal">-</span><br>
+                Computes: <span id="consComputeVal">-</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="race-result-alert" id="raceResultBanner">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span id="raceResultText">
+              Trigger <strong>Option 3 (Race Condition)</strong> when count is between 1 and 4 to witness thread interleaving.
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: SIMULATION CONTROLS & LIVE CLI CONSOLE -->
+      <div class="sidebar-panel">
+        
+        <!-- AUTO SIMULATION CARD -->
+        <div class="panel-card">
+          <div class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+            Simulation Settings
+          </div>
+
+          <div class="auto-controls">
+            <button class="btn btn-outline" id="autoSimBtn">
+              <svg id="autoSimIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 3 19 12 5 21 5 3"/>
+              </svg>
+              <span id="autoSimText">Start Auto Simulation</span>
+            </button>
+
+            <div class="slider-row">
+              <div class="slider-label-row">
+                <span>Simulation Interval</span>
+                <span id="speedDisplay" style="font-family: var(--font-mono);">1.2s</span>
+              </div>
+              <input type="range" id="simSpeed" min="500" max="3000" step="100" value="1200">
+            </div>
+
+            <div class="slider-row" style="margin-top: 4px;">
+              <div class="slider-label-row">
+                <span>Warehouse Capacity</span>
+                <span id="capConfigDisplay" style="font-family: var(--font-mono);">5</span>
+              </div>
+              <input type="range" id="capSlider" min="3" max="8" step="1" value="5">
+            </div>
+          </div>
+        </div>
+
+        <!-- TERMINAL / EVENT STREAM -->
+        <div class="panel-card console-container">
+          <div class="console-header">
+            <div class="section-title" style="font-size: 0.85rem;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="4 17 10 11 4 5"/>
+                <line x1="12" y1="19" x2="20" y2="19"/>
+              </svg>
+              Execution Log
+            </div>
+            <button class="btn btn-outline btn-sm" id="clearLogBtn" style="padding: 2px 8px; font-size: 0.65rem;">
+              Clear
+            </button>
+          </div>
+
+          <div class="console-screen" id="consoleScreen">
+            <!-- Dynamic terminal logs -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div>
+        Savio OS Lab · Exercise P5 · Producer-Consumer Bounded Buffer Simulation
+      </div>
+      <div class="footer-links">
+        <span>Capacity: <strong id="footCap">5</strong></span>
+        <span>•</span>
+        <span>Algorithm: Non-Synchronized Critical Section</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
