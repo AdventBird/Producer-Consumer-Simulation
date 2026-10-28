@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+<body data-theme="dark">
 
   <div class="container">
     
@@ -108,51 +108,57 @@
       <!-- LEFT: VISUAL GARAGE & CONTROLS -->
       <div class="garage-section">
         
-        <div class="section-header">
-          <div class="section-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="7" width="20" height="14" rx="2"/>
-              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-            </svg>
-            Warehouse Parking Bays (Buffer)
+        <!-- WAREHOUSE BUFFER CARD -->
+        <div class="panel-card warehouse-card">
+          <div class="section-header">
+            <div class="section-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2"/>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+              </svg>
+              Warehouse Parking Bays (Buffer)
+            </div>
+            <div class="header-badges">
+              <span class="slot-index" id="slotsCountLabel">5 BAY STORAGE</span>
+              <span class="buffer-capacity-pill pill-empty" id="bufferCapacityPill">0 / 5 In Use</span>
+            </div>
           </div>
-          <span class="slot-index" id="slotsCountLabel">5 BAY STORAGE</span>
-        </div>
 
-        <!-- BAYS CONTAINER -->
-        <div class="bays-grid" id="baysGrid">
-          <!-- Dynamically populated slots -->
-        </div>
+          <!-- BAYS CONTAINER -->
+          <div class="bays-grid" id="baysGrid">
+            <!-- Dynamically populated slots -->
+          </div>
 
-        <!-- CLI ACTION BUTTONS (Matching 1, 2, 3 in cpp.py) -->
-        <div class="action-panel">
-          <button class="btn btn-produce" id="btnProduce" title="Option 1: Add a vehicle to the lot">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="16"/>
-              <line x1="8" y1="12" x2="16" y2="12"/>
-            </svg>
-            1. Produce (+ Vehicle)
-          </button>
+          <!-- CLI ACTION BUTTONS (Matching 1, 2, 3 in cpp.py) -->
+          <div class="action-panel">
+            <button class="btn btn-produce" id="btnProduce" title="Option 1: Add a vehicle to the lot">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="16"/>
+                <line x1="8" y1="12" x2="16" y2="12"/>
+              </svg>
+              1. Produce (+ Vehicle)
+            </button>
 
-          <button class="btn btn-consume" id="btnConsume" title="Option 2: Rent a vehicle out">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="8" y1="12" x2="16" y2="12"/>
-            </svg>
-            2. Consume (- Rent)
-          </button>
+            <button class="btn btn-consume" id="btnConsume" title="Option 2: Rent a vehicle out">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="8" y1="12" x2="16" y2="12"/>
+              </svg>
+              2. Consume (- Rent)
+            </button>
 
-          <button class="btn btn-race" id="btnRace" title="Option 3: Simulate non-atomic read/write race condition">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-            </svg>
-            3. Race Condition
-          </button>
+            <button class="btn btn-race" id="btnRace" title="Option 3: Simulate non-atomic read/write race condition">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+              3. Race Condition
+            </button>
+          </div>
         </div>
 
         <!-- RACE CONDITION STEP-BY-STEP EXPLANATION -->
-        <div class="race-explanation-box" id="raceExplanationBox">
+        <div class="panel-card race-explanation-box" id="raceExplanationBox">
           <div class="race-header">
             <div style="font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-race)" stroke-width="2">
